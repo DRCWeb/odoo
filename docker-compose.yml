@@ -3,7 +3,10 @@ version: "3.8"
 services:
   web:
     container_name: ${ODOO_CONTAINER_NAME}
-    image: odoo:${ODOO_VERSION}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: odoo:${ODOO_VERSION}-custom
     depends_on:
       - db
     ports:

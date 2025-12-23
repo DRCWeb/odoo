@@ -2,10 +2,8 @@ version: "3.8"
 
 services:
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: odoo-v19-prod-ynayku:latest
+    container_name: ${ODOO_CONTAINER_NAME}
+    image: odoo:${ODOO_VERSION}
     depends_on:
       - db
     ports:
@@ -13,12 +11,19 @@ services:
     volumes:
       - ${ODOO_CONF}:/etc/odoo
       - odoo-web-data:/var/lib/odoo
+      - ${ODOO_SERVER}:/mnt/odoo
       - ${ENTERPRISE}:/mnt/enterprise
       - ${EXTRA_ADDONS}:/mnt/extra-addons
+    environment:
+      - HOST=db
+      - USER=${PG_USER}
+      - PASSWORD=${PG_PASSWORD}
     networks:
       - odoo_net
+    restart: unless-stopped
 
   db:
+    container_name: ${PG_CONTAINER_NAME}
     image: postgres:${PG_VERSION}
     environment:
       POSTGRES_DB: postgres
@@ -31,6 +36,7 @@ services:
       - odoo-db-data:/var/lib/postgresql/data/pgdata
     networks:
       - odoo_net
+    restart: unless-stopped
 
 volumes:
   odoo-web-data:

@@ -12,7 +12,7 @@ services:
     ports:
       - "${ODOO_PORT}:8069"
     volumes:
-      - ./conf:/etc/odoo
+      - ${ODOO_CONF}:/etc/odoo
       - odoo-web-data:/var/lib/odoo
       - ${ODOO_SERVER}:/var/lib/odoo/odoo
       - ${ENTERPRISE}:/var/lib/odoo/enterprise

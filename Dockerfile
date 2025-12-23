@@ -1,9 +1,11 @@
 FROM odoo:19
 
+LABEL org.opencontainers.image.title="odoo-v19-prod"
+LABEL org.opencontainers.image.description="Odoo 19 production image with system deps"
+LABEL org.opencontainers.image.version="19"
+
 USER root
 
-# Solo dependencias del sistema que realmente necesites para tus módulos.
-# Si no tienes dependencias extra, puedes incluso borrar este bloque completo.
 RUN apt-get update && apt-get install -y \
     libldap2-dev \
     libsasl2-dev \

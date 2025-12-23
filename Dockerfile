@@ -2,8 +2,10 @@ FROM odoo:19
 
 USER root
 
-# Instalar dependencias del sistema necesarias para compilar paquetes
+# 1) Dependencias del sistema + herramientas para venv (PEP 668 friendly)
 RUN apt-get update && apt-get install -y \
+    python3-venv \
+    python3-full \
     gcc \
     g++ \
     python3-dev \
@@ -17,24 +19,31 @@ RUN apt-get update && apt-get install -y \
     libffi-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Actualizar pip y setuptools
-RUN pip3 install --upgrade pip setuptools wheel
+# 2) Crear virtualenv dedicado (evita "externally-managed-environment")
+RUN python3 -m venv /opt/venv
 
-# Desinstalar paquetes problemáticos con versiones inválidas de la imagen base
-RUN pip3 uninstall -y pdfminer.six || true
+# 3) Forzar uso del venv para cualquier ejecución posterior (incluye Odoo si respeta PATH)
+ENV PATH="/opt/venv/bin:$PATH"
 
-# Copiar e instalar requirements
-COPY ./requirements.txt /requirements.txt
+# 4) Actualizar pip/setuptools/wheel dentro del venv
+RUN pip install --upgrade pip setuptools wheel
 
-# Primero instalar numpy y paquetes base críticos para evitar conflictos de compilación
-RUN pip3 install --no-cache-dir --prefer-binary \
-    'numpy>=1.24.0,<2.0.0' \
-    'setuptools>=60.0.0' \
-    'Cython>=0.29.0'
+# 5) (Opcional) limpiar paquete problemático si estuviera instalado en el venv
+RUN pip uninstall -y pdfminer.six || true
 
-# Instalar el resto de dependencias con flags optimizados para usar wheels precompiladas
-RUN pip3 install --no-cache-dir \
-    --prefer-binary \
-    -r /requirements.txt
+# 6) Copiar e instalar requirements dentro del venv
+COPY ./requirements.txt /tmp/requirements.txt
 
-RUN rm /requirements.txt
+# Primero instalar bases críticas para minimizar compilaciones
+RUN pip install --no-cache-dir --prefer-binary \
+    "numpy>=1.24.0,<2.0.0" \
+    "setuptools>=60.0.0" \
+    "Cython>=0.29.0"
+
+# Instalar el resto
+RUN pip install --no-cache-dir --prefer-binary -r /tmp/requirements.txt \
+    && rm -f /tmp/requirements.txt
+
+# 7) Volver a usuario odoo por buenas prácticas (la imagen base lo suele tener)
+USER odoo
+

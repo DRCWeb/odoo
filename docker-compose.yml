@@ -13,7 +13,7 @@ services:
             - ${ODOO_SERVER}:/var/lib/odoo/odoo
             - ${ENTERPRISE}:/var/lib/odoo/enterprise
             - ${EXTRA_ADDONS}:/mnt/extra-addons
-            - ${REPOSITORY}:/mnt/repository
+           # - ${REPOSITORY}:/mnt/repository
     db:
         container_name: ${PG_CONTAINER_NAME}
         image: postgres:${PG_VERSION}

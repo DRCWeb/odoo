@@ -10,16 +10,14 @@ services:
       - "${ODOO_PORT}:8069"
     volumes:
       - ${ODOO_CONF}:/etc/odoo
-      - odoo-web-data:/var/lib/odoo
       - ${ODOO_SERVER}:/mnt/odoo
       - ${ENTERPRISE}:/mnt/enterprise
       - ${EXTRA_ADDONS}:/mnt/extra-addons
+    command: ["/mnt/odoo/odoo-bin", "-c", "/etc/odoo/odoo.conf"]
     environment:
       - HOST=db
       - USER=${PG_USER}
       - PASSWORD=${PG_PASSWORD}
-    networks:
-      - odoo_net
     restart: unless-stopped
 
   db:

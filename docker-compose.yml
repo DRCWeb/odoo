@@ -14,7 +14,7 @@ services:
     volumes:
       - ${ODOO_CONF}:/etc/odoo
       - odoo-web-data:/var/lib/odoo
-      - ${ODOO_SERVER}:/var/lib/odoo/odoo
+      #- ${ODOO_SERVER}:/var/lib/odoo/odoo
       - ${ENTERPRISE}:/var/lib/odoo/enterprise
       - ${EXTRA_ADDONS}:/mnt/extra-addons
       #- ${REPOSITORY}:/mnt/repository

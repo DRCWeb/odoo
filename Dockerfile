@@ -2,7 +2,7 @@ FROM odoo:18
 
 USER root
 
-# Instalar dependencias del sistema necesarias
+# Instalar dependencias del sistema necesarias para compilar paquetes
 RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
@@ -17,4 +17,8 @@ RUN apt-get update && apt-get install -y \
     libffi-dev \
     && rm -rf /var/lib/apt/lists/*
 
-USER odoo
+# Actualizar pip y setuptools
+RUN pip3 install --upgrade pip setuptools wheel
+
+# Desinstalar paquetes problemáticos con versiones inválidas de la imagen base
+RUN pip3 uninstall -y pdfminer.six || true

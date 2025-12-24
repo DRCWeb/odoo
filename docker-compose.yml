@@ -17,7 +17,8 @@ services:
       - ${ODOO_SERVER}:/var/lib/odoo/odoo
       - ${ENTERPRISE}:/var/lib/odoo/enterprise
       - ${EXTRA_ADDONS}:/mnt/extra-addons
-    # - ${REPOSITORY}:/mnt/repository
+    networks:
+      - odoo-network
   db:
     container_name: ${PG_CONTAINER_NAME}
     image: postgres:${PG_VERSION}
@@ -30,6 +31,11 @@ services:
       - "${PG_PORT}:5432"
     volumes:
       - odoo-db-data:/var/lib/postgresql/data/pgdata
+    networks:
+      - odoo-network
+networks:
+  odoo-network:
+    driver: bridge
 volumes:
   odoo-web-data:
   odoo-db-data:

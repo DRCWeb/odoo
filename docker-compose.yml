@@ -2,7 +2,7 @@ version: "3.1"
 services:
   odoo18:
     container_name: ${ODOO_CONTAINER_NAME}
-    image: ${ODOO_IMAGE}
+    image: odoo:${ODOO_VERSION}
     depends_on:
       - db
     ports:
